@@ -3,12 +3,23 @@ import { useContext } from "react";
 import { ThemeData } from "./assets/ThemeContext";
 import { useFormik } from "formik";
 import { loginSchema } from "./assets/ValidationSchemas";
+import { useLoginMutation } from "./assets/AuthQuery";
 
 const LoginPage = () => {
   let { theme } = useContext(ThemeData);
   let lightTheme = "h-[92vh] flex items-center justify-center w-full bg-white";
   let darkTheme =
     "h-[92vh] flex items-center justify-center w-full bg-gray-750";
+  const [login, { isLoading, isError, isSuccess }] = useLoginMutation();
+
+  const handleLogin = async (value) => {
+    try {
+      let data = await login(value).unwrap();
+      console.log(data);
+    } catch (err) {
+      console.error("Failed to login: ", err);
+    }
+  };
 
   let formik = useFormik({
     initialValues: {
@@ -17,14 +28,11 @@ const LoginPage = () => {
     },
     validationSchema: loginSchema,
     onSubmit: (value, action) => {
-      // console.log("Submit clicke d")
-      console.log(value);
+      handleLogin(value);
 
       action.resetForm();
     },
   });
-
-  console.log(formik);
 
   return (
     <div className={theme == "light" ? lightTheme : darkTheme}>
@@ -50,7 +58,9 @@ const LoginPage = () => {
               className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Enter your email "
             />
-            {formik.errors.email && formik.touched.password ? <p className="text-red-600"> {formik.errors.email} </p>: null}
+            {formik.errors.email && formik.touched.password ? (
+              <p className="text-red-600"> {formik.errors.email} </p>
+            ) : null}
           </div>
           <div className="mb-4">
             <label
@@ -71,7 +81,9 @@ const LoginPage = () => {
               autoComplete="false"
             />
 
-          {formik.errors.password && formik.touched.password ?   <p className="text-red-600"> {formik.errors.password} </p>:null}
+            {formik.errors.password && formik.touched.password ? (
+              <p className="text-red-600"> {formik.errors.password} </p>
+            ) : null}
           </div>
           <div className="flex items-center justify-between mb-4">
             <a href="#" className="text-xs text-indigo-500 ">
@@ -82,8 +94,9 @@ const LoginPage = () => {
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Login
+            {isLoading ? "...loging in " : "Login"}
           </button>
+          {isError == true ? <p> email/password is incorrect</p> : null}
         </form>
       </div>
     </div>

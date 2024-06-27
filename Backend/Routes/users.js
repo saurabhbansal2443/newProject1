@@ -1,11 +1,20 @@
 import express from "express";
 import upload from "../middlewares/multer.middleware.js";
-import { createUser , updatePicture , userData } from "../Controllers/users.js";
+import auth from "../middlewares/auth.middleware.js"; 
+import {
+  signup,
+  updatePicture,
+  userData,
+  login,
+  logout,
+} from "../Controllers/users.js";
 
 let Router = express.Router();
 
-Router.post("/signup", createUser)
-  .get("/userData", userData)
-  .patch('/updatePicture' ,upload.single('profilePicture') , updatePicture)
+Router.post("/signup", signup)
+  .get("/userdata",auth,  userData)
+  .patch("/updatePicture", upload.single("profilePicture"), updatePicture)
+  .post("/login", login)
+  .post("/logout",auth, logout);
 
 export default Router;
