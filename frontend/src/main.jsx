@@ -11,8 +11,16 @@ import ProductInfo from "./ProductInfo.jsx";
 import Shimmer from "./Shimmer.jsx";
 import LoginPage from "./LoginPage.jsx";
 import SignUp from "./SignUp.jsx";
+import ProtectedRoute from "./assets/ProtectedRoute.jsx";
 
 const FoodApp = lazy (() => import('./FoodApp.jsx'));
+
+let HomeProtect = ProtectedRoute(Home);
+let AboutProtect = ProtectedRoute(AboutUs);
+let CartProtect = ProtectedRoute(Cart);
+let ProductInfoProtect = ProtectedRoute(ProductInfo);
+
+
 
 let appRouter = createBrowserRouter([
   { path: "/", 
@@ -20,19 +28,19 @@ let appRouter = createBrowserRouter([
   children : [
     {
         path: "/",
-        element:<Home></Home>
+        element:<HomeProtect></HomeProtect> ,
     },
     {
         path:"/about",
-        element:<AboutUs></AboutUs>
+        element:<AboutProtect></AboutProtect>
     },
     {
         path:"/cart",
-        element:<Cart></Cart>
+        element:<CartProtect></CartProtect>
     },
     {
       path : "/prodInfo/:id",
-      element:<ProductInfo></ProductInfo>
+      element:<ProductInfoProtect></ProductInfoProtect>
     },{
       path : "/food",
       element: (

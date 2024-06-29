@@ -5,7 +5,7 @@ let auth = async (req, res  , next) =>{
     try{
     let token = req.cookies?.accessToken || req.header("Authorization")?.replace('Bearer ','');
 
-    console.log("token" , token , req);
+    
 
     if(!token) {
         res.status(401).json({res : false , message : "unAuthorized request "})

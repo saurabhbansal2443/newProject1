@@ -13,7 +13,7 @@ let Home = () => {
   let [search, setSearch] = useState("");
 
   let cartDataId = useSelector((state)=>state.cart.id )
-  console.log(cartDataId)
+ 
 
    let AddedComponent = AddedProductInCart(ProductCard) // Higher order compoenent 
 

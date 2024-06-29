@@ -4,6 +4,7 @@ import { ThemeData } from "./assets/ThemeContext";
 import { useFormik } from "formik";
 import { loginSchema } from "./assets/ValidationSchemas";
 import { useLoginMutation } from "./assets/AuthQuery";
+import {useNavigate } from "react-router-dom"
 
 const LoginPage = () => {
   let { theme } = useContext(ThemeData);
@@ -12,10 +13,12 @@ const LoginPage = () => {
     "h-[92vh] flex items-center justify-center w-full bg-gray-750";
   const [login, { isLoading, isError, isSuccess }] = useLoginMutation();
 
+  let navigate = useNavigate()
+
   const handleLogin = async (value) => {
     try {
       let data = await login(value).unwrap();
-      console.log(data);
+      navigate("/");
     } catch (err) {
       console.error("Failed to login: ", err);
     }

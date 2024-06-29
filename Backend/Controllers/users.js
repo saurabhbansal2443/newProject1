@@ -9,6 +9,7 @@ const generateToken = async (user) => {
 };
 
 let signup = async (req, res) => {
+  console.log("Signup called ")
   let { email } = req.body;
 
   try {
@@ -42,17 +43,19 @@ let signup = async (req, res) => {
 };
 
 let login = async (req, res) => {
+  console.log("login called " , req.body)
   let { email, password } = req.body;
 
   try {
     //Checking if the user exists or not
     const existingUser = await User.findOne({ email: email });
+    console.log(existingUser);
     if (!existingUser) {
       return res.json({ message: "User not  exists" });
     }
 
     let result = await existingUser.isPasswordCorrect(password);
-    console.log(result);
+   
     if (result  ) {
       let { accessToken, refreshToken } = await generateToken(existingUser); // generating tokens
       existingUser.refreshToken = refreshToken;

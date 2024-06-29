@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { ThemeData } from "./assets/ThemeContext";
 import { useSelector } from "react-redux";
+import { useLogoutMutation } from "./assets/AuthQuery";
+import { useNavigate } from "react-router-dom";
 
 
 let NavBar = () => {
@@ -9,13 +11,27 @@ let NavBar = () => {
 
   let { theme, setTheme } = useContext(ThemeData);
 
+  let [logout,  { isLoading, isError, isSuccess }] = useLogoutMutation();
   let cartItems = useSelector((state) => state.cart.items);
-  // console.log(cartItems);
+  let navigate = useNavigate();
 
   let handleThemeChange = () => {
     setTheme(theme == "light" ? "dark" : "light");
   }
 
+  const handleLogout = async () => {
+    try {
+      const response = await logout().unwrap();
+      console.log(response); // Log the response to see its structure
+      if (response && response.res === true) {
+        navigate("/login");
+      } else {
+        console.error("Logout failed:", response);
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
   useEffect(() => {
     localStorage.setItem("Theme", theme)
   },[theme])
@@ -110,8 +126,8 @@ let NavBar = () => {
            
           </div>
 
-          <Link to="/food">
-            <p className="mx-4 text-2xl"> Logout </p>
+          <Link >
+            <p className="mx-4 text-2xl" onClick={handleLogout}> Logout </p>
            
           </Link>
         </div>
