@@ -1,13 +1,14 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext , useState } from "react";
 import { ThemeData } from "./assets/ThemeContext";
 import { useFormik } from "formik";
 import { loginSchema } from "./assets/ValidationSchemas";
 import { useLoginMutation } from "./assets/AuthQuery";
-import {useNavigate } from "react-router-dom"
+import {useNavigate , Link } from "react-router-dom"
 
 const LoginPage = () => {
   let { theme } = useContext(ThemeData);
+  let [loginError , setLoginError] = useState(null)
   let lightTheme = "h-[92vh] flex items-center justify-center w-full bg-white";
   let darkTheme =
     "h-[92vh] flex items-center justify-center w-full bg-gray-750";
@@ -17,8 +18,12 @@ const LoginPage = () => {
 
   const handleLogin = async (value) => {
     try {
+      setLoginError(null);
       let data = await login(value).unwrap();
+      setLoginError(data.message)
+      if(data.res == true ){
       navigate("/");
+      }
     } catch (err) {
       console.error("Failed to login: ", err);
     }
@@ -30,8 +35,8 @@ const LoginPage = () => {
       password: "",
     },
     validationSchema: loginSchema,
-    onSubmit: (value, action) => {
-      handleLogin(value);
+    onSubmit: async (value, action) => {
+      await handleLogin(value);
 
       action.resetForm();
     },
@@ -89,9 +94,9 @@ const LoginPage = () => {
             ) : null}
           </div>
           <div className="flex items-center justify-between mb-4">
-            <a href="#" className="text-xs text-indigo-500 ">
+            <Link to="/signup" className="text-xs text-indigo-500 ">
               Create Account
-            </a>
+            </Link>
           </div>
           <button
             type="submit"
@@ -99,7 +104,7 @@ const LoginPage = () => {
           >
             {isLoading ? "...loging in " : "Login"}
           </button>
-          {isError == true ? <p> email/password is incorrect</p> : null}
+          {loginError !=null ?  <p> email/password is incorrect</p> : null}
         </form>
       </div>
     </div>

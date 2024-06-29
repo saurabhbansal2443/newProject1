@@ -3,29 +3,30 @@ import { useGetDataQuery } from "./AuthQuery";
 import { useNavigate } from "react-router-dom";
 
 const ProtectedRoute = (Component) => {
+  
   return (props) => {
-    const { data, error, isLoading } = useGetDataQuery();
+    const { data, error, isLoading, refetch } = useGetDataQuery();
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+      refetch();
+    }, []);
 
     useEffect(() => {
       if (isLoading) {
         return;
       }
       if (error) {
-        console.error("Error fetching data:", error);
-        navigate("/login")
+        navigate("/login");
         return;
       }
       if (data) {
-        console.log("Data fetched:", data);
         if (data.res === true) {
           setUser(data.data);
         } else {
           navigate("/login");
         }
-      } else {
-        console.log("No data available");
       }
     });
 

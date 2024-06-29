@@ -1,13 +1,32 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext  , useState } from "react";
 import { ThemeData } from "./assets/ThemeContext";
 import { useFormik } from "formik";
 import { signupSchema } from "./assets/ValidationSchemas";
+import { Link } from "react-router-dom";
+import { useSignupMutation } from "./assets/AuthQuery";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   let { theme } = useContext(ThemeData);
+  let [signupError , setSignupError] = useState(null) ;
+  let [signup , {isLoading , isError , isSuccess}] = useSignupMutation()
   let lightTheme = "flex items-center justify-center min-h-[92vh] bg-white";
   let darkTheme = "flex items-center justify-center min-h-[92vh]";
+   let navigate = useNavigate();
+  let handleSignup = async (value)=>{
+    try{
+      setSignupError(null)
+      let data = await signup(value);
+      console.log(data);
+      setSignupError(data.message )
+      if(data.res == true ){
+      navigate("/");
+      }
+    }catch(err){
+      console.log("Failed to signup " , err)
+    }
+  }
 
   let formik = useFormik({
     initialValues: {
@@ -17,8 +36,9 @@ const SignUp = () => {
       confirmPassword: "",
     },
     validationSchema: signupSchema,
-    onSubmit: (values, action) => {
-      console.log(values);
+    onSubmit: async (values, action) => {
+     
+      await handleSignup(values)
       action.resetForm();
     },
   });
@@ -42,6 +62,7 @@ const SignUp = () => {
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter your username"
               name="userName"
+              value={formik.values.userName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
@@ -66,6 +87,7 @@ const SignUp = () => {
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter your email"
               name="email"
+              value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
@@ -91,6 +113,7 @@ const SignUp = () => {
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter your password"
               name="password"
+              value={formik.values.password}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
@@ -116,6 +139,7 @@ const SignUp = () => {
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Confirm your password"
               name="confirmPassword"
+              value={formik.values.confirmPassword}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
@@ -136,12 +160,15 @@ const SignUp = () => {
           >
             Register
           </button>
+          {
+            signupError !=null ? <p> {signupError}</p> : <></>
+          }
         </form>
         <p className="text-center text-white mt-4">
           Already have an account?
-          <a href="#" className="text-indigo-500 font-semibold">
+          <Link to="/login" className="text-indigo-500 font-semibold">
             Sign In
-          </a>
+          </Link>
         </p>
       </div>
     </div>

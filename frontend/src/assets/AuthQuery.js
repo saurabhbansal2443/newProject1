@@ -29,8 +29,21 @@ export const apiSlice = createApi({
             url : "/logout",
             method:"POST"
         })
-    })
+    }),
+    updatePicture: builder.mutation({
+        query: ({ email, profilePicture }) => {
+          const formData = new FormData();
+          formData.append('email', email);
+          formData.append('profilePicture', profilePicture);
+  
+          return {
+            url: 'updatePicture',
+            method: 'PATCH',
+            body: formData,
+          };
+        }
+  })
   })
 });
 
-export const { useLoginMutation, useSignupMutation, useGetDataQuery , useLogoutMutation} = apiSlice;
+export const { useLoginMutation, useSignupMutation, useGetDataQuery , useLogoutMutation , useUpdatePictureMutation} = apiSlice;
